@@ -1,2 +1,2 @@
-README.html: README.asciidoc
-	asciidoc --backend slidy README.asciidoc
+meetup.html: meetup.asciidoc
+	asciidoc --backend slidy meetup.asciidoc

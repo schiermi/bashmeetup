@@ -1,193 +1,303 @@
 = bash Meetup
 Andreas Schiermeier <andreas@schiermeier.name>
+:encoding: utf-8
+:lang: de
 :data-uri:
 
-== Wer bin ich
+== env
 
-USER=schiermi
-NAME=Andreas Schiermeier
-EMAIL=andreas@schiermeier.name
-TWITTER=@schiermi
-=🐧@💻 🚴 https://ccc-ffm.de/
-EMPLOYER=FactSet Digital Solutions GmbH
-
+[source,bash]
+-------------------------------------------------
+USER="schiermi"
+NAME="Andreas Schiermeier"
+EMAIL="andreas@schiermeier.name"
+TWITTER="@schiermi"
+EMPLOYER="FactSet Digital Solutions GmbH"
+_=("🐧@💻" "🚴" "https://ccc-ffm.de/")
+-------------------------------------------------
 
 == Shells (sh, ksh, bash, zsh)
 
 === Was ist eine Shell, bash
-  Lt. _man 1 bash_ ein "command language interpreter"
-  Eine Programmiersprache für Betriebssystemprozesse.
-  Wahlweise mit direkter Kommandoeingabe (interaktive Shell) oder nach einem "Drehbuch" (Shellskript).
-  Interaktiv kann der Bediener auf unvorhergesehene (Fehler) reagieren. Passiert im Script zuviel Unbedachtes muss öfters gedreht oder dass Drehbuch werden.
+* lt. `man 1 bash` ein "command language interpreter"
+** "Programmiersprache für Betriebssystemprozesse"
+** direkte Kommandoeingabe (interaktive Shell)
+** Kommandos nach einem "Drehbuch" (Shellskript).
+
+Interaktiv kann der Bediener auf unvorhergesehene (Fehler) reagieren. Passiert im Script zuviel Unbedachtes muss öfters gedreht oder dass Drehbuch werden.
 
 === Geschichte
-  Anfang der 1970er Jahre: Unix-Shells
-  Ende der 1970er: Stephen R. *Bourne Shell*, sh, Basis aktueller UNIX-shells; sowie ksh, csh
-  Ende der 1980er: bash bourne again shell vereint und erweitert bekannte Features
-  Anfang der 1990er: zsh, weitere neue Ansätze, werden teilweise auch in bash übernommen
-  Aktuell: bash ist in vielen Systemen und Umgebungen verfügbar; oft Standardshell
+*  Anfang der 1970er Jahre: Unix-Shells
+* Ende der 1970er: Stephen R. *Bourne Shell*, sh, Basis aktueller UNIX-shells; sowie ksh, csh
+* Ende der 1980er: bash bourne again shell vereint und erweitert bekannte Features
+* Anfang der 1990er: zsh, weitere neue Ansätze, werden teilweise auch in bash übernommen
+* Aktuell: bash auf vielen Systemen verfügbar und die Standardshell; Geschichte "erlebbar"
 
 == Usability (im interaktiven Betrieb)
 
-Vorraussetzung & Einstiegshürde: Kommandos müssen bekannt sein
+* Vorraussetzung & Einstiegshürde: Kommandos müssen bekannt sein
+* ; (Semikolon): separiert mehrere Anweisungen in einer Eingabezeile
+* ⏎ (Zeilenschaltung, newline): Bringt Anweisungen zur Ausführung
+* einige (wichtige) Tastenkombinationen mit ✲ (Strg, Steuerung, Ctrl, Control)
+|=============================================================================
+| ✲+C | Eingabe oder Programmausführung abbrechen (genauer: sendet Signal 2, SIGINT)
+| ✲+D | Sende EOF (beende die Eingabe)
+| ✲+R | In der Befehlszeilenhistorie suchen
+| ✲+S | Terminal Flusskontrolle Stopp
+| ✲+Q | Terminal Flusskontrolle Fortsetzen
+| ✲+Z | Vordergrundprogramm in interaktiver Shell mit Jobcontrol anhalten (sende Signal 19, SIGSTOP)
+| ✲+A | Springe in der Befehlszeile an den Anfang (via readline)
+| ✲+E | Springe in der Befehlszeile an das Ende (via readline)
+| ← → | Innerhalb der Befehlszeile navigieren
+| ↑ ↓ | Innerhalb der Befehlszeilenhistorie navigieren
+|=============================================================================
 
-Häufig verwendet: Tastenkombinationen mit ✲ (Strg, Steuerung, Ctrl, Control)
-
-⏎ (Zeilenschaltung, newline): Bringt die Anweisungen zur Ausführung
-✲+C Eingabe oder Programmausführung abbrechen (genauer: sendet Signal 2, SIGINT)
-← → Innerhalb der Befehlszeile navigieren
-↑ ↓ Innerhalb der Befehlszeilenhistorie navigieren
-✲+R In der Befehlszeilenhistorie suchen
-✲+A Springe in der Befehlszeile an den Anfang (via readline)
-✲+E Springe in der Befehlszeile an das Ende (via readline)
-✲+Z Vordergrundprogramm in interaktiver Shell mit Jobcontrol anhalten (sende Signal 19, SIGSTOP)
-✲+D Sende EOF (beende die Eingabe)
-
-Achtung: Unter Umständen werden Tastenkombinationen vom Betriebssystem, der grafischen Benutzeroberfläche oder dem Terminalemulator abgefangen.
+[NOTE]
+Unter Umständen werden Tastenkombinationen vom Betriebssystem, der grafischen Benutzeroberfläche oder dem Terminalemulator abgefangen.
 Desweiteren können Terminal (tty) oder die readline Bibliothek abweichend arbeiten
 
-== Kommandos: Programme, Builtins, Funktionen, Aliase
+== Kommandos: Programme
 
-Kommandos können Programme, Builtins, Funktionen oder Aliase sein.
+Programme sind per Dateisystempfad vom Betriebssystem auffindbar und werden diesem zur Ausführung überlassen.
 
-*Programme* sind per Dateisystempfad vom Betriebssystem auffindbar und werden diesem zur Ausführung überlassen.
-z.B. /bin/ls, /bin/mv
+- `/bin/ls`
+- `/bin/mv`
 
-*Builtins* sind aus Effizients- oder Machbarkeitsgründen von der Shell _selbst_ abgearbeitete Befehle
-z.B. (Effizientz): pwd, test, [, time
-z.B. (Machbarkeit): cd, read, umask, return, exit, [[, builtin, command
+== Kommandos: Builtins
 
-man 1 bash, SHELL BUILTIN COMMANDS
-help
-help builinname
+Builtins sind aus Effizienzs- oder Machbarkeitsgründen von der Shell *selbst* abgearbeitete Befehle.
 
-*Funktionen* fassen mehrere Kommandos als benannte Subroutine zusammen (vergleichbar zu Programmiersprachen)
+.Effizienz
+- `pwd`
+- `test`
+- `[`
+- (`time`)
 
-Definition: function fname () { …; }
+.Machbarkeit
+- `cd`
+- `read`
+- `return`
+- `exit`
+- `[[`
+- `builtin`
+- `command`
 
-Welche Funktionen gibt es?
+.Siehe auch
+- `man 1 bash`, SHELL BUILTIN COMMANDS
+- `help`
+- `help builinname`
+
+
+== Kommandos: Funktionen
+
+Funktionen fassen mehrere Kommandos als benannte Subroutine zusammen (vergleichbar zu Programmiersprachen).
+
+.Definition
+[source,bash]
+-------------------------------------------------
+function fname () {
+  echo "Mein Name ist ${FUNCNAME}."
+  return 0
+}
+-------------------------------------------------
+
+[source,bash]
+.Welche Funktionen gibt es?
+-------------------------------------------------
 declare -F
-…inkl. Definition
+-------------------------------------------------
+
+[source,bash]
+.…inkl. Definition?
+-------------------------------------------------
 declare -f
+-------------------------------------------------
 
-*Aliase* als Abkürzung für häufig genutzte Aufrufe
+== Kommandos: Aliase
 
-z.B.
-alias la='ls -la' # Eingabe von la führt "ls -la" aus
+Aliase dienen als Abkürzung für häufig genutzte Aufrufe.
+
+[source,bash]
+-------------------------------------------------
+# Eingabe von "la" führt "ls -la" aus
+alias la='ls -la'
+
+# Eingabe von "cd.." führt "cd .." aus
 alias cd..='cd ..'
 
-Aliase auflisten:
+# Aliase auflisten
 alias
-Alias löschen:
+
+# Alias löschen
 unalias la
+-------------------------------------------------
 
 Suchreihenfolge: Alias, Funktion, Builtin, Programm (Suche anhand PATH)
 
-Details: `man 1 bash`, "COMMAND EXECUTION"
+.Siehe auch
+- `man 1 bash`, "COMMAND EXECUTION"
 
-== Variablen & Arrays - Deklaration
+== Variablen & Arrays - Deklaration, Zuweisung
 
 |=============================================================================
-| `variable='inhalt'` |
+| `variable='inhalt'` | Deklaration bei erster Zuweisung
+| `declare variable` | Deklaration ohne Zuweisung
 | `declare variable='inhalt'` |
 | `declare -i variable=1542650400` | Ganzzahl, Zuweisung einer Zeichenkette ergibt 0!
 | `declare -ri c='299792458'`      | Ganzzahl, readonly
 | `unset variable`                 | Variable löschen
-| `declare -a indexarray=( 'Stickstoff' 'Sauerstoff' 'Rest' )` | Indiziertes Array (Start: 0)
+| `declare -a indexarray=( 'Stickstoff' 'Sauerstoff' 'Rest' )` | Indiziertes Array (Startindex: 0)
 | `declare -A keyarray=( ['VW']='Abschalteinrichtung' ['Frankfurt']='Stimmenzählung' )` | Textindiziertes Array
 | `unset array`                    | ganzes Array löschen
 | `unset array[index]`             | Wert an Index in Array löschen
 |=============================================================================
 
-Innerhalb von Funktionen für lokale Variablen innerhalb der Subroutine:
-`local` statt `declare`.
+[NOTE]
+Innerhalb von Funktionen zur Begrenzung des Gültigkeitsbereichs `local` statt `declare` verwenden.
 
 == Variablen & Arrays - Verwendung
 
-Zugriff auf einfache Variablen: $variable
-…oder: ${variable}
-z.B. echo "${HOME}"
+.einfache Variablen
+* Zugriff auf einfache Variablen: `$variable`
+** …oder besser: `${variable}`
 
-Zugriff auf Element an Index 1: ${indexarray[1]}
-Alle Elemente: ${indexarray[@]}
-Anzahl der Elemente: ${#indexarray[@]}
+.Arrays
+* Zugriff auf das zweite Element des Arrays (Index 1): `${indexarray[1]}`
+* Alle Elemente: `${indexarray[@]}`
+* Anzahl der Elemente: `${#indexarray[@]}`
 
-Zugriff auf Element von Index "key": ${keyarray["key"]}
-Alle Keys: ${!keyarray[@]}
-Alle Elemente: ${keyarray[@]}
+.textindizierte Arrays
+* Zugriff auf Element des Index "key": `${keyarray["key"]}`
+* Alle Keys: `${!keyarray[@]}`
+* Alle Elemente: `${keyarray[@]}`
 
-== besondere Variablen
+[source,bash]
+.Beispiele
+-------------------------------------------------
+echo "${HOME}"
+echo "${indexarray[1]}"
+echo "${keyarray["Frankfurt"]}"
+-------------------------------------------------
 
-$0: Scriptname
-$#: Anzahl der übergebenen Parameter
-$1, $2 … $n: dem Script übergebene Parameter
-$*: dem Script übergebene Parameter als String verbunden
-$@: dem Script übergebene Parameter als Array
-wenn >= 10: ${10}, ${11}, …
+== "besondere" Variablen
 
-$$ Prozess-ID der Shell
-$? Fehlercode des zuletzt beendeten Programms
-${PPID} Prozess-ID des Elternprozesses
-${HOSTNAME}: Hostname des das Script ausführenden Systems
-${PWD}: aktuelles Arbeitsverzeichnis
+|=============================================================================
+| `$0` | Scriptname
+| `$#` | Anzahl der übergebenen Parameter
+| `$1, `$2`, … `$9` | dem Script übergebene Parameter
+| `${10}`, `${11}`, … | dem Script übergebene Parameter (> 9)
+| `$*` | dem Script übergebene Parameter als String verbunden
+| `$@` | dem Script übergebene Parameter als Array
+| `$$` | Prozess-ID der Shell
+| `$?` | Fehlercode des zuletzt beendeten Programms
+| `${PPID}` | Prozess-ID des Elternprozesses
+| `${HOSTNAME}` | Hostname des das Script ausführenden Systems
+| `${PWD}` | aktuelles Arbeitsverzeichnis
+| `${HOME}` | Hauptverzeichnis des angemeldeten Benutzers; Ziel für "cd" und Wert von ~
+| `${PATH}` | Suchpfad für ohne vollen Pfad aufgerufene *Programme*
+|=============================================================================
 
-${HOME}: Hauptverzeichnis des angemeldeten Benutzers; Ziel für "cd" und Wert von ~
-${PATH}: Suchpfad für ohne vollen Pfad aufgerufene *Programme*
+== "besondere" Variablen - PATH
 
-Beispiel:
-PATH="/home/as/bin:/usr/local/bin:/usr/bin:/bin:/usr/lib/mit/sbin"
-Befehl: ls
-Suche nach (erster Treffer "gewinnt"):
-/home/as/bin/ls
-/usr/local/bin/ls
-/usr/bin/ls
-/bin/ls
-/usr/lib/mit/sbin/ls
+=== Beispiel "ls"
 
-"Suchergebnis" wird für die Laufzeit der Shell vermerkt!
+`PATH="/home/as/bin:/usr/local/bin:/usr/bin:/bin:/usr/lib/mit/sbin"`
 
-Suchcache anzeigen: hash -l
-Suchcache leeren: hash -r
+.Suche nach (erster Treffer "gewinnt"):
+- /home/as/bin/ls
+- /usr/local/bin/ls
+- /usr/bin/ls
+- /bin/ls
+- /usr/lib/mit/sbin/ls
 
-Weitere "besondere" Variablen: man 1 bash, PARAMETERS
+."Suchergebnis" wird für die Laufzeit der Shell vermerkt!
+- Suchcache anzeigen: hash -l
+- Suchcache leeren: hash -r
 
-== Parametertrennung
+.Siehe auch
+- `man 1 bash`, PARAMETERS
+
+== Parametertrennung - IFS
 
 Noch eine Variable mehr: IFS
 
-${IFS}: *Internal Field Separator*; Trennzeichen für 
-Standard: Leerzeichen, Tabulator, Zeilenumbruch
+- `${IFS}`: *Internal Field Separator*
+- Trennzeichen für die "Generierung" von Parametern aus Variablen.
+- Standard: Leerzeichen, Tabulator, Zeilenumbruch
+- `unset` IFS stellt den Standard wiederher (nicht: IFS="").
 
-unset
+[NOTE]
+Das erste Zeichen aus IFS wird bei `"$*"` als Verbindungszeichen der Elemente verwendet.
 
-Tipp: Das erste Zeichen aus IFS wird bei "$*" als Verbindungszeichen der Elemente verwendet.
+- Demo: `demo/params.sh`
 
-== Platzhalter & Textersetzung in Kommandos
+== Platzhalter & Textersetzung in Kommandos - Variablen
 
-Allgemein: Textersetzungen im eingegebenen oder eingelesenen Kommando
+Allgemein: Textersetzungen im eingegebenen oder eingelesenen Kommando.
+
+- Es wird etwas Anderes ausgeführt als eingegeben.
+
+[source,bash]
+.*Variablen* bereits bekannt
+-------------------------------------------------
+echo "${HOME}"
+-------------------------------------------------
+
+== Platzhalter & Textersetzung in Kommandos - Wildcards
 
 *Wildcards (üblicherweise anhand von Dateinamen)*
 |================================================
-|*     | keines bis beliebig viele Zeichen
-|?     | exakt ein beliebiges Zeichen
-|[0-9] | ein Zeichen aus dem angegebenen Bereich
+|`*`     | keines bis beliebig viele Zeichen
+|`?`     | exakt ein beliebiges Zeichen
+|`[0-9]` | ein Zeichen aus dem angegebenen Bereich
 |================================================
 
-Kombinierbar, z.B.: [0-9]*.csv
+- Wildcards sind kombinierbar
+- Nicht mit RegEx z.B. "`grep`" (regulären Ausdrücken verwechseln)!
 
-*Variablen*: bereits bekannt
+[source,bash]
+-------------------------------------------------
+ls -l [0-9]*.csv
+-------------------------------------------------
 
-*Berechnungen* via $(( … )) z.B.: i=2; echo $(( i + 2 ))
+== Platzhalter & Textersetzung in Kommandos - Berechnungen, Klammererweiterung
 
-*Klammererweiterung* via Zeichenbereiche z.B.: {2000..2018}{01..12}{a..f}.txt
+[source,bash]
+.Berechnungen via $(( … ))
+-------------------------------------------------
+i=2
+echo $(( i + 2 ))
+-------------------------------------------------
 
-*Prozesssubstitution* Ausgabe (STDOUT) von anderen Programmen als Parameter nutzen
-  z.B. echo "Externe IP: $(curl -s ifconfig.co)"
-  veraltet: echo "Externe IP: `curl -s ifconfig.co`
-  ähnlich: Dateiinhalt als Parameter nutzen $(< /etc/passwd)
+[source,bash]
+.Klammererweiterung via Zeichenbereiche z.B.: {2000..2018}{01..12}{a..f}.txt
+-------------------------------------------------
+echo {2000..2018}{01..12}{a..f}.txt
+-------------------------------------------------
 
-~ Wert von ${HOME}
-~BENUTZERNAME HOME-Verzeichnis eines (anderen) Benutzers
+== Platzhalter & Textersetzung in Kommandos - Prozesssubstitution, ~
+
+
+[source,bash]
+.Prozesssubstitution Ausgabe (STDOUT) von anderen Programmen als Parameter nutzen
+-------------------------------------------------
+echo "Externe IP: $(curl -s ifconfig.co)"
+
+# veraltet, nicht verschachtelbar:
+echo "Externe IP: `curl -s ifconfig.co`"
+
+# ähnlich: Dateiinhalt als Parameter nutzen
+echo "$(< /etc/passwd)"
+-------------------------------------------------
+
+[source,bash]
+.`~`
+-------------------------------------------------
+# Wert von ${HOME}
+echo ~
+# HOME-Verzeichnis eines (anderen) Benutzers
+echo ~root
+-------------------------------------------------
 
 == Ausgabeumleitung, Pipes
 
@@ -200,6 +310,8 @@ Kombinierbar, z.B.: [0-9]*.csv
 | cmd1 < <( cmd2 ) | STDOUT der Subshell von cmd2 als STDIN für cmd1
 |==========================================================================
 
+- Demo: `demo/stdouterr-echo.sh`
+- Demo: `demo/stdouterr-ls.sh`
 
 == Hashbang - der Anfang vom Script
 
@@ -216,16 +328,18 @@ nicht als Binärdatei ausgeführt werden kann, sondern ein Interpreter zu Hilfe 
   
 == Der Anfang vom Script - was sonst noch praktisch ist
 
-=== Laufzeiteinstellungen
+=== Laufzeiteinstellungen - better safe than sorry
+
 |=============================================================================
-| set -o nounset | Zugriff auf uninitialisierte Variablen erzeugt einen Fehler
-| set -o errexit | Nicht abgefangene Fehler (rc != 0) beenden das Script
-| set -o pipefail | Fehler in Pipes-Ketten werden als Fehler des gesamten Konstrukts gewertet
-| set -o noclobber | verhindert das Überschreiben bestehender Dateien mit >, force: # >|
-| IFS=$'\n\t' | verhindert, dass Leerzeichen als Worttrenner verwendet werden
+| `set -o nounset` | Zugriff auf uninitialisierte Variablen erzeugt einen Fehler
+| `set -o errexit` | Nicht abgefangene Fehler (rc != 0) beenden das Script
+| `set -o pipefail` | Fehler in Pipes-Ketten werden als Fehler des gesamten Konstrukts gewertet
+| `set -o noclobber` | verhindert das Überschreiben bestehender Dateien mit `cmd > datei` erzwingen mit `cmd >\| datei`
+| `IFS=$'\n\t'` | verhindert, dass Leerzeichen als Worttrenner verwendet werden
 |=============================================================================
 
 === Tools & Styleguide
+
 |=============================================================================
 | https://www.shellcheck.net/ | Untersucht Script auf potenzielle Fehlerquellen
 | https://google.github.io/styleguide/shell.xml | Styleguide für Shellskripte 
@@ -233,11 +347,31 @@ nicht als Binärdatei ausgeführt werden kann, sondern ein Interpreter zu Hilfe 
 
 == Der Ende vom Script - Aufräumen!
 
-mktemp
-trap
+[source,bash]
+-------------------------------------------------
+tmpfile="$(mktemp)"
 
-iconv, tr, jq, xargs
+function cleanup() {
+  rm -f "${tmpfile}"
+}
 
+trap "cleanup" exit
+-------------------------------------------------
 
+== Tolle Tools
 
+- `xargs`
+- `tr`
+- `iconv`
+- `jq` (ggf. glowforge.sh)
 
+== EOF
+
+[source,bash]
+-------------------------------------------------
+xdg-open "https://github.com/schiermi/bashmeetup/"
+echo "andreas@schiermeier.name - @schiermi"
+echo "Danke für das Interesse!"
+~adt/guest
+echo "$?"
+-------------------------------------------------
